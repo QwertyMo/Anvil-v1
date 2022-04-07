@@ -1,0 +1,126 @@
+import org.lwjgl.BufferUtils
+import org.lwjgl.glfw.Callbacks
+import org.lwjgl.glfw.GLFW
+import org.lwjgl.glfw.GLFW.glfwGetWindowSize
+import org.lwjgl.glfw.GLFWErrorCallback
+import org.lwjgl.opengl.GL
+import org.lwjgl.opengl.GL11.*
+import org.lwjgl.system.MemoryStack
+import org.lwjgl.system.MemoryUtil
+
+
+fun main(args: Array<String>) {
+    HelloWorld().run()
+}
+
+class HelloWorld {
+    var timer = SyncTimer(SyncTimer.LWJGL_GLFW)
+    // The window handle
+    private var window: Long = 0
+    fun run() {
+        init()
+        loop()
+
+        // Free the window callbacks and destroy the window
+        Callbacks.glfwFreeCallbacks(window)
+        GLFW.glfwDestroyWindow(window)
+
+        // Terminate GLFW and free the error callback
+        GLFW.glfwTerminate()
+        GLFW.glfwSetErrorCallback(null)!!.free()
+    }
+
+    private fun init() {
+        // Setup an error callback. The default implementation
+        // will print the error message in System.err.
+        GLFWErrorCallback.createPrint(System.err).set()
+
+        // Initialize GLFW. Most GLFW functions will not work before doing this.
+        check(GLFW.glfwInit()) { "Unable to initialize GLFW" }
+
+        // Configure GLFW
+        GLFW.glfwDefaultWindowHints() // optional, the current window hints are already the default
+        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE) // the window will stay hidden after creation
+        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE) // the window will be resizable
+
+        // Create the window
+        window = GLFW.glfwCreateWindow(300, 300, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL)
+        if (window == MemoryUtil.NULL) throw RuntimeException("Failed to create the GLFW window")
+
+        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
+        GLFW.glfwSetKeyCallback(
+            window
+        ) { window: Long, key: Int, scancode: Int, action: Int, mods: Int ->
+            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) GLFW.glfwSetWindowShouldClose(
+                window,
+                true
+            ) // We will detect this in the rendering loop
+        }
+        MemoryStack.stackPush().use { stack ->
+            val pWidth = stack.mallocInt(1) // int*
+            val pHeight = stack.mallocInt(1) // int*
+
+            // Get the window size passed to glfwCreateWindow
+            GLFW.glfwGetWindowSize(window, pWidth, pHeight)
+
+            // Get the resolution of the primary monitor
+            val vidmode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor())
+
+            // Center the window
+            GLFW.glfwSetWindowPos(
+                window,
+                (vidmode!!.width() - pWidth[0]) / 2,
+                (vidmode.height() - pHeight[0]) / 2
+            )
+        }
+
+        // Make the OpenGL context current
+        GLFW.glfwMakeContextCurrent(window)
+        // Enable v-sync
+        GLFW.glfwSwapInterval(1)
+
+        // Make the window visible
+        GLFW.glfwShowWindow(window)
+    }
+
+    private fun loop() {
+
+
+
+        GL.createCapabilities()
+        glClearColor(0f, 0f, 0.0f, 0.0f)
+        while (!GLFW.glfwWindowShouldClose(window)) {
+            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+            render()
+            GLFW.glfwSwapBuffers(window)
+            GLFW.glfwPollEvents()
+            timer.sync(50.0);
+        }
+    }
+
+    var x = 0.0
+
+    private fun render() {
+
+
+
+        glColor3f(1f, 0f, 0f)
+        glBegin(GL_LINES)
+        glVertex2f(0.0f, 0.0f);
+        glVertex2f(kotlin.math.sin(x).toFloat(), kotlin.math.cos(x).toFloat())
+        glEnd()
+        x+=0.1
+        if(x>360) x = 0.0
+    }
+
+    fun getHW(){
+        val w = BufferUtils.createIntBuffer(1)
+        val h = BufferUtils.createIntBuffer(1)
+        glfwGetWindowSize(window, w, h)
+        val width = w[0]
+        val height = h[0]
+
+        println("$width:$height")
+    }
+
+}
