@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 import java.util.concurrent.Flow
+import javax.sound.sampled.Line
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -24,18 +25,29 @@ class Anvil{
 
     val title  = "Anvil"
 
-    private var FPSTimer = SyncTimer(SyncTimer.LWJGL_GLFW)
+    private var window : Long = 0
 
-    private var window: Long = 0
+    lateinit var update: AnvilUpdate
+    lateinit var render: AnvilRender
+
+    fun registerObject(obj: AnvilObject){
+        update.registerObject(obj)
+        render.registerObject(obj)
+    }
 
     suspend fun run() {
         coroutineScope {
             init()
-            launch { AnvilUpdate(
-                window,
-                TPS
-            ) }
-            renderLoop()
+            update = AnvilUpdate(window, TPS)
+            render = AnvilRender(window, FPS)
+
+            registerObject(LineObject())
+
+            launch {
+                update.run()
+            }
+            render.run()
+
 
             Callbacks.glfwFreeCallbacks(window)
             GLFW.glfwDestroyWindow(window)
@@ -90,33 +102,6 @@ class Anvil{
 
     }
 
-    private fun renderLoop() {
-        GL.createCapabilities()
-        GL11.glClearColor(0f, 0f, 0.0f, 0.0f)
-        while (!GLFW.glfwWindowShouldClose(window)) {
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT)
-            render()
-            GLFW.glfwSwapBuffers(window)
-            GLFW.glfwPollEvents()
-            FPSTimer.sync(FPS);
-        }
-    }
 
-    fun line(point1: Point, point2: Point, color: Color){
-        val c = color.glColor()
-        GL11.glColor3f(c.r, c.g, c.b)
-        GL11.glBegin(GL11.GL_LINES)
-        GL11.glVertex2f(point1.x, point1.y);
-        GL11.glVertex2f(point2.x, point2.y)
-        GL11.glEnd()
-    }
-
-    private fun render() {
-        line(
-            Point(0.0f,0.0f),
-            Point(1.0f,1.0f),
-            Color(255,128,255)
-        )
-    }
 
 }

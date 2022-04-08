@@ -1,4 +1,38 @@
 package core
 
-class AnvilRender {
+import core.model.Color
+import core.model.Point
+import org.lwjgl.glfw.GLFW
+import org.lwjgl.opengl.GL
+import org.lwjgl.opengl.GL11
+
+class AnvilRender(
+    private val window: Long,
+    private val fps: Double
+) {
+
+    private var FPSTimer = SyncTimer(SyncTimer.LWJGL_GLFW)
+
+    private val objList = mutableListOf<AnvilObject>()
+
+    fun registerObject(obj: AnvilObject){
+        objList.add(obj)
+    }
+
+    fun run(){
+        GL.createCapabilities()
+        GL11.glClearColor(0f, 0f, 0.0f, 0.0f)
+        while (!GLFW.glfwWindowShouldClose(window)) {
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT)
+            render()
+            GLFW.glfwSwapBuffers(window)
+            GLFW.glfwPollEvents()
+            FPSTimer.sync(fps);
+        }
+    }
+
+
+    private fun render() {
+        for(i in objList) i.render()
+    }
 }

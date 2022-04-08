@@ -8,7 +8,13 @@ class AnvilUpdate(
 ) {
     private var TPSTimer = SyncTimer(SyncTimer.LWJGL_GLFW)
 
-    init {
+    private val objList = mutableListOf<AnvilObject>()
+
+    fun registerObject(obj: AnvilObject){
+        objList.add(obj)
+    }
+
+    fun run(){
         while (!GLFW.glfwWindowShouldClose(window)) {
             update()
             TPSTimer.sync(tps)
@@ -16,6 +22,7 @@ class AnvilUpdate(
     }
 
     private fun update(){
-
+        //println(objList.size)
+        for(i in objList) i.update()
     }
 }

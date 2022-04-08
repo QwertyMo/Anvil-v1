@@ -1,5 +1,8 @@
 import core.Anvil
+import core.LineObject
 
 suspend fun main(args: Array<String>) {
-    Anvil().run()
+    val engine = Anvil()
+    engine.run()
+
 }
