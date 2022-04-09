@@ -1,4 +1,4 @@
-package core
+package core.render
 
 import core.model.Color
 import core.model.Point

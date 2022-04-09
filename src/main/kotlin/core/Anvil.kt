@@ -1,20 +1,24 @@
 package core
 
-import core.model.Color
-import core.model.Point
+import core.common.IOUtil.ioResourceToByteBuffer
+import core.logic.AnvilUpdate
+import core.obj.AnvilObject
+import core.render.AnvilRender
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWErrorCallback
-import org.lwjgl.opengl.GL
+import org.lwjgl.opengl.ARBFramebufferObject.glGenerateMipmap
+import org.lwjgl.opengl.ARBInternalformatQuery2.GL_TEXTURE_2D
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
+import org.lwjgl.stb.STBImage.*
 import org.lwjgl.system.MemoryStack
+import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.system.MemoryUtil
-import java.util.concurrent.Flow
-import javax.sound.sampled.Line
-import kotlin.math.cos
-import kotlin.math.sin
+import java.nio.ByteBuffer
+
 
 class Anvil{
     val TPS    = 120.0
@@ -35,16 +39,18 @@ class Anvil{
         render.registerObject(obj)
     }
 
-    suspend fun run() {
+    suspend fun run(game: (engine: Anvil)->Unit) {
         coroutineScope {
             init()
+
             update = AnvilUpdate(window, TPS)
             render = AnvilRender(window, FPS)
 
-            registerObject(LineObject())
-
             launch {
                 update.run()
+            }
+            launch{
+                game(this@Anvil)
             }
             render.run()
 
@@ -84,7 +90,8 @@ class Anvil{
                 (vidmode.height() - pHeight[0]) / 2
             )
         }
-
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GLFW.glfwMakeContextCurrent(window)
         GLFW.glfwSwapInterval(1)
         GLFW.glfwShowWindow(window)
@@ -101,7 +108,4 @@ class Anvil{
         }
 
     }
-
-
-
 }

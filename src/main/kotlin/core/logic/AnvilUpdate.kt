@@ -1,5 +1,7 @@
-package core
+package core.logic
 
+import core.common.SyncTimer
+import core.obj.AnvilObject
 import org.lwjgl.glfw.GLFW
 
 class AnvilUpdate(
@@ -22,7 +24,6 @@ class AnvilUpdate(
     }
 
     private fun update(){
-        //println(objList.size)
         for(i in objList) i.update()
     }
 }

@@ -1,4 +1,4 @@
-package core
+package core.common
 import org.lwjgl.glfw.GLFW
 
 

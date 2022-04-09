@@ -1,7 +1,7 @@
-package core
+package core.render
 
-import core.model.Color
-import core.model.Point
+import core.obj.AnvilObject
+import core.common.SyncTimer
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
@@ -10,9 +10,7 @@ class AnvilRender(
     private val window: Long,
     private val fps: Double
 ) {
-
     private var FPSTimer = SyncTimer(SyncTimer.LWJGL_GLFW)
-
     private val objList = mutableListOf<AnvilObject>()
 
     fun registerObject(obj: AnvilObject){
@@ -30,7 +28,6 @@ class AnvilRender(
             FPSTimer.sync(fps);
         }
     }
-
 
     private fun render() {
         for(i in objList) i.render()

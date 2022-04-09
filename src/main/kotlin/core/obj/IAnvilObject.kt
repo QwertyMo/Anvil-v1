@@ -1,4 +1,4 @@
-package core
+package core.obj
 
 interface IAnvilObject {
     fun render()
