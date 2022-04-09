@@ -1,5 +1,3 @@
-
-import core.Texture
 import core.model.Color
 import core.model.Point
 import core.obj.AnvilObject
@@ -15,7 +13,11 @@ class LineObject : AnvilObject() {
     }
 
     override fun render() {
-        Texture("test.png")
+        Draw.line(
+            Point(0.0f,0.0f),
+            Point(sin(x).toFloat(), cos(x).toFloat()),
+            Color(255,128,255)
+        )
     }
 
     override fun update() {
