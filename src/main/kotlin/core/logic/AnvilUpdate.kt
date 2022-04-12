@@ -10,10 +10,10 @@ class AnvilUpdate(
 ) {
     private var TPSTimer = SyncTimer(SyncTimer.LWJGL_GLFW)
 
-    private val objList = mutableListOf<AnvilObject>()
+    private var sceneObjects: MutableMap<String, AnvilObject> = mutableMapOf()
 
-    fun registerObject(obj: AnvilObject){
-        objList.add(obj)
+    fun setObjectList(objectList: MutableMap<String, AnvilObject>){
+        sceneObjects = objectList
     }
 
     fun run(){
@@ -24,6 +24,6 @@ class AnvilUpdate(
     }
 
     private fun update(){
-        for(i in objList) i.update()
+        for(i in sceneObjects) i.value.update()
     }
 }

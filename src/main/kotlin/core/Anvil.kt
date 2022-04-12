@@ -1,59 +1,57 @@
 package core
 
-import core.common.IOUtil.ioResourceToByteBuffer
 import core.logic.AnvilUpdate
 import core.obj.AnvilObject
 import core.render.AnvilRender
+import core.scene.AnvilScene
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWErrorCallback
-import org.lwjgl.opengl.ARBFramebufferObject.glGenerateMipmap
-import org.lwjgl.opengl.ARBInternalformatQuery2.GL_TEXTURE_2D
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL11.*
-import org.lwjgl.stb.STBImage.*
 import org.lwjgl.system.MemoryStack
-import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.system.MemoryUtil
-import java.nio.ByteBuffer
-
 
 class Anvil{
-    val TPS    = 120.0
-    val FPS    = 60.0
+    private val tps    = 120.0
+    private val fps    = 60.0
 
-    val height = 480
-    val width  = 600
+    private val height = 480
+    private val width  = 600
 
-    val title  = "Anvil"
+    private val title  = "Anvil"
 
-    private var window : Long = 0
+    private var window : Long        = 0
 
-    lateinit var update: AnvilUpdate
-    lateinit var render: AnvilRender
+    private lateinit var update: AnvilUpdate
+    private lateinit var render: AnvilRender
 
     fun registerObject(obj: AnvilObject){
-        update.registerObject(obj)
-        render.registerObject(obj)
+        //update.registerObject(obj)
+       // render.registerObject(obj)
+    }
+
+    fun runScene(scene: AnvilScene){
+        update.setObjectList(scene.getObjects())
+        render.setObjectList(scene.getObjects())
     }
 
     suspend fun run(game: (engine: Anvil)->Unit) {
         coroutineScope {
             init()
 
-            update = AnvilUpdate(window, TPS)
-            render = AnvilRender(window, FPS)
+            update = AnvilUpdate(window, tps)
+            render = AnvilRender(window, fps)
 
             launch {
                 update.run()
             }
+
             launch{
                 game(this@Anvil)
             }
-            render.run()
 
+            render.run()
 
             Callbacks.glfwFreeCallbacks(window)
             GLFW.glfwDestroyWindow(window)
@@ -90,8 +88,7 @@ class Anvil{
                 (vidmode.height() - pHeight[0]) / 2
             )
         }
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         GLFW.glfwMakeContextCurrent(window)
         GLFW.glfwSwapInterval(1)
         GLFW.glfwShowWindow(window)
@@ -108,4 +105,5 @@ class Anvil{
         }
 
     }
+
 }

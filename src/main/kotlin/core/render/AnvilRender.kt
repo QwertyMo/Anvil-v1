@@ -11,10 +11,10 @@ class AnvilRender(
     private val fps: Double
 ) {
     private var FPSTimer = SyncTimer(SyncTimer.LWJGL_GLFW)
-    private val objList = mutableListOf<AnvilObject>()
+    private var sceneObjects: MutableMap<String, AnvilObject> = mutableMapOf()
 
-    fun registerObject(obj: AnvilObject){
-        objList.add(obj)
+    fun setObjectList(objectList: MutableMap<String, AnvilObject>){
+        sceneObjects = objectList
     }
 
     fun run(){
@@ -30,6 +30,7 @@ class AnvilRender(
     }
 
     private fun render() {
-        for(i in objList) i.render()
+        for(i in sceneObjects) i.value.render()
     }
+
 }
