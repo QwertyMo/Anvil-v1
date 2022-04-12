@@ -1,29 +1,30 @@
 package core.logic
 
 import core.common.SyncTimer
-import core.obj.AnvilObject
+import core.scene.AnvilScene
+import core.scene.EmptyScene
 import org.lwjgl.glfw.GLFW
 
 class AnvilUpdate(
     private val window: Long,
     private val tps: Double
 ) {
-    private var TPSTimer = SyncTimer(SyncTimer.LWJGL_GLFW)
+    private var tpsTimer = SyncTimer(SyncTimer.LWJGL_GLFW)
 
-    private var sceneObjects: MutableMap<String, AnvilObject> = mutableMapOf()
+    private var scene: AnvilScene = EmptyScene {}
 
-    fun setObjectList(objectList: MutableMap<String, AnvilObject>){
-        sceneObjects = objectList
+    fun setScene(scene: AnvilScene){
+        this.scene = scene
     }
 
     fun run(){
         while (!GLFW.glfwWindowShouldClose(window)) {
             update()
-            TPSTimer.sync(tps)
+            tpsTimer.sync(tps)
         }
     }
 
     private fun update(){
-        for(i in sceneObjects) i.value.update()
+        for(i in scene.getObjects()) i.value.update()
     }
 }

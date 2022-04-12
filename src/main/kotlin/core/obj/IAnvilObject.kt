@@ -1,10 +1,11 @@
 package core.obj
 
-import core.model.Point
+import core.render.AnvilFigure
+import org.joml.Vector2f
 
 interface IAnvilObject {
-    fun render()
+    fun render(): AnvilFigure
     fun update()
 
-    fun pos(): Point
+    fun size(): Vector2f
 }

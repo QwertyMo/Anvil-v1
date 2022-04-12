@@ -1,7 +1,6 @@
 package core
 
 import core.logic.AnvilUpdate
-import core.obj.AnvilObject
 import core.render.AnvilRender
 import core.scene.AnvilScene
 import kotlinx.coroutines.coroutineScope
@@ -26,14 +25,9 @@ class Anvil{
     private lateinit var update: AnvilUpdate
     private lateinit var render: AnvilRender
 
-    fun registerObject(obj: AnvilObject){
-        //update.registerObject(obj)
-       // render.registerObject(obj)
-    }
-
     fun runScene(scene: AnvilScene){
-        update.setObjectList(scene.getObjects())
-        render.setObjectList(scene.getObjects())
+        update.setScene(scene)
+        render.setScene(scene)
     }
 
     suspend fun run(game: (engine: Anvil)->Unit) {

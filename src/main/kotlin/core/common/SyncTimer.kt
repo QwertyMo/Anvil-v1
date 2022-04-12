@@ -1,7 +1,6 @@
 package core.common
 import org.lwjgl.glfw.GLFW
 
-
 class SyncTimer(mode: Int) {
     var mode = 0
         private set
@@ -13,7 +12,7 @@ class SyncTimer(mode: Int) {
     }
 
     private val resolution: Double
-        private get() {
+        get() {
             when (mode) {
                 JAVA_NANO -> return NANO_RESOLUTION
                 LWJGL_GLFW -> return GLFW_RESOLUTION
@@ -21,7 +20,7 @@ class SyncTimer(mode: Int) {
             return 0.0
         }
     private val time: Double
-        private get() {
+        get() {
             when (mode) {
                 JAVA_NANO -> return System.nanoTime().toDouble()
                 LWJGL_GLFW -> return GLFW.glfwGetTime()
@@ -29,13 +28,13 @@ class SyncTimer(mode: Int) {
             return 0.0
         }
 
-    fun setNewMode(timerMode: Int) {
+    private fun setNewMode(timerMode: Int) {
         mode = timerMode
         timeThen = time
         println("Timer mode set to $modeString timer")
     }
 
-    val modeString: String?
+    private val modeString: String?
         get() {
             when (mode) {
                 JAVA_NANO -> return "NANO"
@@ -52,7 +51,7 @@ class SyncTimer(mode: Int) {
         if (isEnabled) {
             var gapTo = resolution / fps + timeThen
             while (gapTo < timeNow) {
-                gapTo = resolution / fps + gapTo
+                gapTo += resolution / fps
                 updates++
             }
             while (gapTo > timeNow) {
@@ -63,7 +62,7 @@ class SyncTimer(mode: Int) {
             timeThen = gapTo
         } else {
             while (timeThen < timeNow) {
-                timeThen = resolution / fps + timeThen
+                timeThen += resolution / fps
                 updates++
             }
         }
