@@ -33,13 +33,24 @@ class AnvilRender(
     private fun render() {
 
         for(i in scene.getObjects()) {
-
             val obj = i.value.render()
+            val scale = i.value.scale
+            val rotation = (i.value.rotation * Math.PI/180).toFloat()
             if(obj is Line){
                 Draw.line(
                     Vector2f((obj.point1.x/scene.size().x), (obj.point1.y/scene.size().y)),
                     Vector2f((obj.point2.x/scene.size().x), (obj.point2.y/scene.size().y)),
-                    obj.color)
+                    obj.color,
+                    scale,
+                    rotation)
+            }
+            else if(obj is Rectangle){
+                Draw.rectangle(
+                    Vector2f((obj.point1.x/scene.size().x) , (obj.point1.y/scene.size().y)),
+                    Vector2f((obj.point2.x/scene.size().x), (obj.point2.y/scene.size().y)),
+                    obj.color,
+                    scale,
+                    rotation)
             }
 
         }

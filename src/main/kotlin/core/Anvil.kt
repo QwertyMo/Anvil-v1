@@ -15,7 +15,7 @@ class Anvil{
     private val tps    = 120.0
     private val fps    = 60.0
 
-    private val height = 480
+    private val height = 500
     private val width  = 600
 
     private val title  = "Anvil"

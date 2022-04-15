@@ -6,6 +6,4 @@ import org.joml.Vector2f
 interface IAnvilObject {
     fun render(): AnvilFigure
     fun update()
-
-    fun size(): Vector2f
 }
